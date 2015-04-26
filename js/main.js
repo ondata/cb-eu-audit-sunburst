@@ -31,6 +31,13 @@ window.onload = function() {
                 .append("g")
                 .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
+      svg.append("image")
+         .attr("xlink:href", "images/favicon.gif")
+         .attr("x", -minRadius + padRadius/2)
+         .attr("y", -minRadius + padRadius/2)
+         .attr("width", minRadius*2 - padRadius)
+         .attr("height", minRadius*2 - padRadius);
+
       svg.selectAll("g.pie")
           .data(questions)
           .enter()
