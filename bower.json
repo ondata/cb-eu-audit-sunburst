@@ -23,6 +23,7 @@
   "dependencies": {
     "d3": "~3.5.5",
     "tabletop": "jsoma/tabletop#~1.4.0",
-    "fontawesome": "~4.3.0"
+    "fontawesome": "~4.3.0",
+    "argjs": "~1.2.0"
   }
 }

@@ -1,4 +1,7 @@
+var hCountry = Arg("country");
+
 window.onload = function() {
+
   Tabletop.init({
     key: '1vbKj-KBH4ZAeJu0oSEJXyRhMm-0JdQeqB1sE_2Gg8Hw',
     simpleSheet: true,
@@ -37,16 +40,30 @@ window.onload = function() {
                         .outerRadius(minRadius + (i+1)*stepRadius)
                         .innerRadius(minRadius + i*stepRadius);
 
-            var pieData = countries.map(function(el,i) { return { name: el, value: 1, answer: data[i][q] }; });
+            var pieData = countries.map(function(el,i) { 
+                            return { 
+                              country: el, 
+                              code: codes[i], 
+                              value: 1, 
+                              question: q, 
+                              answer: data[i][q] 
+                            }; 
+                          });
 
             var pie = d3.layout.pie()
-                        .sort(function(a,b) { return d3.ascending(a.name,b.name); })
+                        .sort(function(a,b) { return d3.ascending(a.code, b.code); })
                         .value(function(d) { return d.value; });
 
             var g = d3.select(this).selectAll(".arc")
                        .data(pie(pieData))
                        .enter().append("g")
-                       .attr("class", "arc");
+                       .attr("class", function(d) {
+                         return d.data.code.toLowerCase();
+                       })
+                       .classed("arc", true)
+                       .classed("highlight", function(d,i) {
+                         return hCountry && d.data.code.toLowerCase() === hCountry.toLowerCase();
+                       });
 
             g.append("path")
              .attr("d", arc)
@@ -54,44 +71,57 @@ window.onload = function() {
              
             g.append("title")
              .text(function(d,i) {
-              return d.data.name + ": " + q + " -> " + d.data.answer;
-            });
+               return d.data.country + ": " + d.data.question + " -> " + d.data.answer;
+             });
 
           });
 
-            var arc = d3.svg.arc()
-                        .outerRadius(maxRadius)
-                        .innerRadius(maxRadius - stepRadius);
+      var arc = d3.svg.arc()
+                  .outerRadius(maxRadius)
+                  .innerRadius(maxRadius - stepRadius);
 
-            var pieData = countries.map(function(el,i) { return { name: el, value: 1, answer: codes[i] }; });
+      var pieData = countries.map(function(el,i) { 
+                      return { 
+                        country: el, 
+                        value: 1, 
+                        code: codes[i] 
+                      }; 
+                    });
 
-            var pie = d3.layout.pie()
-                        .sort(function(a,b) { return d3.ascending(a.name,b.name); })
-                        .value(function(d) { return d.value; });
+      var pie = d3.layout.pie()
+                  .sort(function(a,b) { return d3.ascending(a.code, b.code); })
+                  .value(function(d) { return d.value; });
 
-            var g = svg.append("g")
-                       .attr("class", "pie") 
-                       .selectAll(".arc")
-                       .data(pie(pieData))
-                       .enter().append("g")
-                       .attr("class", "arc");
+      var g = svg.append("g")
+                 .attr("class", "pie") 
+                 .selectAll(".arc")
+                 .data(pie(pieData))
+                 .enter().append("g")
+                 .attr("class", function(d) {
+                   return d.data.code.toLowerCase();
+                 })
+                 .classed("arc", true)
+                 .classed("label", true)
+                 .classed("highlight", function(d,i) {
+                   return hCountry && d.data.code.toLowerCase() === hCountry.toLowerCase();
+                 });
 
-            var path = g.append("path")
-                        .attr("d", arc)
-                        .attr("id", function(d,i) { return "path"+i; })
-                        .style("fill", "black");
+      var path = g.append("path")
+                  .attr("d", arc)
+                  .attr("id", function(d,i) { return "path"+i; });
 
-            var label = g.append("text")
-                         .attr("x", 6)
-                         .attr("dy", 15)
+      var label = g.append("text")
+                   .attr("x", 6)
+                   .attr("dy", 15)
              
-            label.append("textPath")
-                 .attr("fill", "white")
-                 .attr("xlink:href", function(d,i) { return "#path"+i; })
-                 .text(function(d) { return d.data.answer; });
+      label.append("textPath")
+           .attr("xlink:href", function(d,i) { return "#path"+i; })
+           .text(function(d) { return d.data.code; });
             
-            label.append("title").text(function(d,i) { return d.data.name; });
+      label.append("title").text(function(d,i) { return d.data.country; });
 
     }
+
   });
+
 };
