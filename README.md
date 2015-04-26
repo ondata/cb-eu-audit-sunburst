@@ -1,1 +1,1 @@
-Sunburst viz for the audit of Confiscati Bene EU, v0.1.0
+Sunburst viz for the audit of Confis1ati Bene EU, v0.1.1
