@@ -1,0 +1,27 @@
+{
+  "name": "audit-sunburst",
+  "version": "0.0.0",
+  "authors": [
+    "Alessio Cimarelli <jenkin@dataninja.it>"
+  ],
+  "description": "Sunburst visualization for Confiscati Bene European audit",
+  "main": "index.html",
+  "keywords": [
+    "mafia",
+    "dataninja",
+    "confiscatibene"
+  ],
+  "license": "MIT",
+  "homepage": "http://www.confiscatibene.it",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "d3": "~3.5.5",
+    "tabletop": "jsoma/tabletop#~1.4.0"
+  }
+}
