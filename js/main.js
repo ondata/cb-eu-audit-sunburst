@@ -15,7 +15,9 @@ window.onload = function() {
           height = 480,
           maxRadius = d3.min([width, height]) / 2,
           minRadius = maxRadius / 10,
-          stepRadius = (maxRadius - minRadius) / (questions.length+1);
+          stepRadius = (maxRadius - minRadius) / (questions.length+1),
+          padRadius = 4,
+          cornerRadius = 2;
 
       var color = d3.scale.ordinal().range(["green","grey","red"]).domain(["Y","N.A.","N"]);
 
@@ -37,8 +39,9 @@ window.onload = function() {
           .each(function(q,i) {
 
             var arc = d3.svg.arc()
-                        .outerRadius(minRadius + (i+1)*stepRadius)
-                        .innerRadius(minRadius + i*stepRadius);
+                        .outerRadius(minRadius + (i+1)*stepRadius - padRadius/2)
+                        .innerRadius(minRadius + i*stepRadius + padRadius/2)
+                        .cornerRadius(cornerRadius);
 
             var pieData = countries.map(function(el,i) { 
                             return { 
@@ -52,7 +55,8 @@ window.onload = function() {
 
             var pie = d3.layout.pie()
                         .sort(function(a,b) { return d3.ascending(a.code, b.code); })
-                        .value(function(d) { return d.value; });
+                        .value(function(d) { return d.value; })
+                        .padAngle(0.02);
 
             var g = d3.select(this).selectAll(".arc")
                        .data(pie(pieData))
@@ -78,7 +82,7 @@ window.onload = function() {
 
       var arc = d3.svg.arc()
                   .outerRadius(maxRadius)
-                  .innerRadius(maxRadius - stepRadius);
+                  .innerRadius(maxRadius - stepRadius + padRadius/2);
 
       var pieData = countries.map(function(el,i) { 
                       return { 
@@ -101,10 +105,7 @@ window.onload = function() {
                    return d.data.code.toLowerCase();
                  })
                  .classed("arc", true)
-                 .classed("label", true)
-                 .classed("highlight", function(d,i) {
-                   return hCountry && d.data.code.toLowerCase() === hCountry.toLowerCase();
-                 });
+                 .classed("label", true);
 
       var path = g.append("path")
                   .attr("d", arc)
