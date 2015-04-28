@@ -1,27 +1,43 @@
+body {
+    width: 640px;
+    margin: auto;
+    text-align: center;
+}
+
+#sunburst {
+    width: 100%;
+}
+
+#map,
+#legend {
+    width: 49%;
+    display: inline-block;
+}
+
 .highlight path {
-  stroke: #000;
-  stroke-width: 2px;
+    stroke: #000;
+    stroke-width: 2px;
 }
 
 .label path {
-  fill: #000;
+    fill: #000;
 }
 
 .label.highlight path {
-	fill: #fff;
+    fill: #fff;
 }
 
 .label text {
-  fill: #fff;
-  stroke: none;
-	font-size: 11px;
+    fill: #fff;
+    stroke: none;
+    font-size: 14px;
 }
 
 .label.highlight text {
-  fill: #000;
+    fill: #000;
 }
 
-#map path.country.inactive {
+#map path.country {
 	fill: #eee;
 }
 
