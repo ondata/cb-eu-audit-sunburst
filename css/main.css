@@ -7,7 +7,28 @@
   fill: #000;
 }
 
+.label.highlight path {
+	fill: #fff;
+}
+
 .label text {
   fill: #fff;
   stroke: none;
+	font-size: 11px;
+}
+
+.label.highlight text {
+  fill: #000;
+}
+
+#map path.country.inactive {
+	fill: #eee;
+}
+
+#map path.country.active {
+	fill: #ccc;
+}
+
+#map path.country.active:hover {
+	fill: #aaa;
 }
