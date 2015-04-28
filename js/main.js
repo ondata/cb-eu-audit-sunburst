@@ -13,7 +13,8 @@ window.onload = function() {
 
     // Contenitori delle viz
     var sunContainer = d3.select("#sunburst"),
-        mapContainer = d3.select("#map");
+        mapContainer = d3.select("#map"),
+        legendContainer = d3.select("#legend");
 
     //imposto la proiezione della mappa
     var projection = d3.geo.azimuthalEqualArea()
@@ -34,10 +35,10 @@ window.onload = function() {
                 return el.Country;
             });
             codes = data.map(function(el) {
-                return el.sovereingt.toLowerCase();
+                return el.ISO3166.toLowerCase();
             });
             questions = d3.keys(data[0]).filter(function(el) {
-                return el != 'Country' && el != 'sovereingt';
+                return el != 'Country' && el != 'sovereingt' && el != 'ISO3166';
             });
 
             var stepRadius = (maxRadius - minRadius) / (questions.length + 1),
@@ -177,6 +178,53 @@ window.onload = function() {
             label.append("title").text(function(d, i) {
                 return d.data.country;
             });
+            
+            // Legenda
+            legendContainer.select("i").remove();
+
+            legendContainer
+                .style("height", (height / 2 - minRadius) + "px")
+                .append("p")
+                .attr("class", "questions")
+                .selectAll("span.question")
+                .data(questions.slice().reverse())
+                .enter().append("span")
+                .attr("class", "question")
+                .style({
+                    "width": (stepRadius - padRadius - 4) + "px",
+                    "margin": padRadius/2 + "px"
+                })
+                .style("height", function(d,i) {
+                   return (10 + questions.length - i) + "px";
+                })
+                .on("mouseover", function(d,i) {
+                    legendContainer.select("#qtext").text(d);
+                })
+                .on("mouseout", function(d,i) {
+                    legendContainer.select("#qtext").text("");
+                });
+
+            legendContainer
+                .append("p")
+                .attr("id", "qtext");
+                
+            legendContainer
+                .append("p")
+                .attr("class", "answers")
+                .selectAll("span.answer")
+                .data(color.domain())
+                .enter().append("span")
+                .attr("class", "answer")
+                .style({
+                    "width": ((maxRadius - minRadius)/3 - padRadius - 4) + "px",
+                    "margin": padRadius/2 + "px"
+                })
+                .style("border-color", function(d,i) {
+                    return color(d);
+                })
+                .text(function(d,i) {
+                    return d;
+                });
         }
     });
     

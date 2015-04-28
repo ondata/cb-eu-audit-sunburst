@@ -11,7 +11,18 @@ body {
 #map,
 #legend {
     width: 49%;
-    display: inline-block;
+}
+
+#map {
+    float: right;
+}
+
+#legend {
+    float: left;
+}
+
+footer {
+    clear: both;
 }
 
 .highlight path {
@@ -47,4 +58,32 @@ body {
 
 #map path.country.active:hover {
 	fill: #aaa;
+}
+
+#legend .questions {
+    margin-top: 0;
+}
+
+#legend .question {
+    display: inline-block;
+    background-color: white;
+    border: 2px dotted black;
+    border-radius: 4px;
+    vertical-align: middle;
+}
+
+#legend .question:hover {
+    background-color: black;
+    border: 2px solid black;
+}
+
+#legend #qtext {
+    height: 2em;
+}
+
+#legend .answer {
+    display: inline-block;
+    border: 4px solid;
+    border-radius: 4px;
+    padding: 2px;
 }
