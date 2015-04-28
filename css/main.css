@@ -1,13 +1,89 @@
+body {
+    width: 640px;
+    margin: auto;
+    text-align: center;
+}
+
+#sunburst {
+    width: 100%;
+}
+
+#map,
+#legend {
+    width: 49%;
+}
+
+#map {
+    float: right;
+}
+
+#legend {
+    float: left;
+}
+
+footer {
+    clear: both;
+}
+
 .highlight path {
-  stroke: #000;
-  stroke-width: 2px;
+    stroke: #000;
+    stroke-width: 2px;
 }
 
 .label path {
-  fill: #000;
+    fill: #000;
+}
+
+.label.highlight path {
+    fill: #fff;
 }
 
 .label text {
-  fill: #fff;
-  stroke: none;
+    fill: #fff;
+    stroke: none;
+    font-size: 14px;
+}
+
+.label.highlight text {
+    fill: #000;
+}
+
+#map path.country {
+	fill: #eee;
+}
+
+#map path.country.active {
+	fill: #ccc;
+}
+
+#map path.country.active:hover {
+	fill: #aaa;
+}
+
+#legend .questions {
+    margin-top: 0;
+}
+
+#legend .question {
+    display: inline-block;
+    background-color: white;
+    border: 2px dotted black;
+    border-radius: 4px;
+    vertical-align: middle;
+}
+
+#legend .question:hover {
+    background-color: black;
+    border: 2px solid black;
+}
+
+#legend #qtext {
+    height: 2em;
+}
+
+#legend .answer {
+    display: inline-block;
+    border: 4px solid;
+    border-radius: 4px;
+    padding: 2px;
 }
