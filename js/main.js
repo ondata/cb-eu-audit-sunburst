@@ -256,6 +256,9 @@ window.onload = function() {
             .classed("active", function(d) {
                 return codes && codes.indexOf(d.properties.iso_a3.toLowerCase()) > -1;
             })
+            .classed("highlight", function(d) {
+                return hCountry && d.properties.iso_a3.toLowerCase() === hCountry.toLowerCase();
+            })
             .attr("d", path)
             .on("mouseover", function(d, i) {
                 if (sunSvg) sunSvg.selectAll(".arc." + d.properties.iso_a3.toLowerCase()).classed("highlight", true);
