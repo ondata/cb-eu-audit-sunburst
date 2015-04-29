@@ -4,27 +4,6 @@ body {
     text-align: center;
 }
 
-#sunburst {
-    width: 100%;
-}
-
-#map,
-#legend {
-    width: 49%;
-}
-
-#map {
-    float: right;
-}
-
-#legend {
-    float: left;
-}
-
-footer {
-    clear: both;
-}
-
 .highlight path {
     stroke: #000;
     stroke-width: 2px;
@@ -56,7 +35,7 @@ footer {
 	fill: #ccc;
 }
 
-#map path.country.active:hover {
+#map path.country.active.highlight {
 	fill: #aaa;
 }
 

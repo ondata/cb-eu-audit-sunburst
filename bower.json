@@ -25,6 +25,7 @@
     "tabletop": "jsoma/tabletop#~1.4.0",
     "fontawesome": "~4.3.0",
     "argjs": "~1.2.0",
-    "topojson": "~1.6.19"
+    "topojson": "~1.6.19",
+    "toast": "daneden/toast#~1.0.0"
   }
 }

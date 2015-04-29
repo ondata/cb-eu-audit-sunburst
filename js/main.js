@@ -155,7 +155,16 @@ window.onload = function() {
                     return d.data.code;
                 })
                 .classed("arc", true)
-                .classed("label", true);
+                .classed("label", true)
+                .on("mouseover", function(d,i) {
+                    sunSvg.selectAll(".arc." + d.data.code).classed("highlight", true);
+                    if (mapSvg) mapSvg.selectAll(".country." + d.data.code).classed("highlight", true);
+                })
+                .on("mouseout", function(d,i) {
+                    sunSvg.selectAll(".arc." + d.data.code).classed("highlight", false);
+                    if (mapSvg) mapSvg.selectAll(".country." + d.data.code).classed("highlight", false);
+                });
+
 
             var path = g.append("path")
                 .attr("d", arc)
@@ -216,7 +225,7 @@ window.onload = function() {
                 .enter().append("span")
                 .attr("class", "answer")
                 .style({
-                    "width": ((maxRadius - minRadius)/3 - padRadius - 4) + "px",
+                    "width": ((maxRadius - minRadius)/4 - padRadius - 4) + "px",
                     "margin": padRadius/2 + "px"
                 })
                 .style("border-color", function(d,i) {
@@ -238,19 +247,28 @@ window.onload = function() {
             .attr("height", height / 2 - minRadius)
             .append("g");
 
-        mapSvg.selectAll("path.country")
+        var features = mapSvg.selectAll("path.country")
             .data(topojson.feature(geo, geo.objects.europe).features)
             .enter().append("path")
+            .attr("class", function(d) {
+                return "country " + d.properties.iso_a3.toLowerCase();
+            })
             .classed("active", function(d) {
                 return codes && codes.indexOf(d.properties.iso_a3.toLowerCase()) > -1;
             })
-            .classed("country", true)
             .attr("d", path)
             .on("mouseover", function(d, i) {
                 if (sunSvg) sunSvg.selectAll(".arc." + d.properties.iso_a3.toLowerCase()).classed("highlight", true);
+                d3.select(this).classed("highlight", true);
             })
             .on("mouseout", function(d, i) {
                 if (sunSvg) sunSvg.selectAll(".arc." + d.properties.iso_a3.toLowerCase()).classed("highlight", false);
+                d3.select(this).classed("highlight", false);
+            });
+
+        features.append("title")
+            .text(function(d) {
+                return d.properties.name;
             });
 
     });
