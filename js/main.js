@@ -225,7 +225,7 @@ window.onload = function() {
                 .enter().append("span")
                 .attr("class", "answer")
                 .style({
-                    "width": ((maxRadius - minRadius)/3 - padRadius - 4) + "px",
+                    "width": ((maxRadius - minRadius)/4 - padRadius - 4) + "px",
                     "margin": padRadius/2 + "px"
                 })
                 .style("border-color", function(d,i) {
