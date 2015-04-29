@@ -247,7 +247,7 @@ window.onload = function() {
             .attr("height", height / 2 - minRadius)
             .append("g");
 
-        mapSvg.selectAll("path.country")
+        var features = mapSvg.selectAll("path.country")
             .data(topojson.feature(geo, geo.objects.europe).features)
             .enter().append("path")
             .attr("class", function(d) {
@@ -264,6 +264,11 @@ window.onload = function() {
             .on("mouseout", function(d, i) {
                 if (sunSvg) sunSvg.selectAll(".arc." + d.properties.iso_a3.toLowerCase()).classed("highlight", false);
                 d3.select(this).classed("highlight", false);
+            });
+
+        features.append("title")
+            .text(function(d) {
+                return d.properties.name;
             });
 
     });
