@@ -35,7 +35,7 @@ body {
 	fill: #ccc;
 }
 
-#map path.country.active:hover {
+#map path.country.active.highlight {
 	fill: #aaa;
 }
 
