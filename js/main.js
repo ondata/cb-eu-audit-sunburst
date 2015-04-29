@@ -1,6 +1,8 @@
 window.onload = function() {
 
-    var hCountry = Arg("country");
+    var getCountry = Arg("country"),
+        getNamedColors = Arg("ncolors"),
+        getHexColors = Arg("hcolors");
 
     var width = 640,
         height = 640,
@@ -10,6 +12,10 @@ window.onload = function() {
         cornerRadius = 2,
         countries, codes, questions,
         sunSvg, mapSvg;
+
+    // Scala dei colori per le risposte
+    var colors = getNamedColors || getHexColors ? (getHexColors ? getHexColors.split(',').map(function(el) { return '#'+el; }) : getNamedColors.split(',')) : ["green","grey","red"],
+        color = d3.scale.ordinal().range(colors).domain(["Y", "N.A.", "N"]);
 
     // Contenitori delle viz
     var sunContainer = d3.select("#sunburst"),
@@ -41,8 +47,7 @@ window.onload = function() {
                 return el != 'Country' && el != 'sovereingt' && el != 'ISO3166';
             });
 
-            var stepRadius = (maxRadius - minRadius) / (questions.length + 1),
-                color = d3.scale.ordinal().range(["green", "grey", "red"]).domain(["Y", "N.A.", "N"]);
+            var stepRadius = (maxRadius - minRadius) / (questions.length + 1);
 
             sunContainer.select("i").remove();
             
@@ -107,7 +112,7 @@ window.onload = function() {
                         })
                         .classed("arc", true)
                         .classed("highlight", function(d, i) {
-                            return hCountry && d.data.code === hCountry.toLowerCase();
+                            return getCountry && d.data.code === getCountry.toLowerCase();
                         });
 
                     g.append("path")
@@ -255,6 +260,9 @@ window.onload = function() {
             })
             .classed("active", function(d) {
                 return codes && codes.indexOf(d.properties.iso_a3.toLowerCase()) > -1;
+            })
+            .classed("highlight", function(d) {
+                return getCountry && d.properties.iso_a3.toLowerCase() === getCountry.toLowerCase();
             })
             .attr("d", path)
             .on("mouseover", function(d, i) {
