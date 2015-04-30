@@ -4,7 +4,8 @@ body {
     text-align: center;
 }
 
-.highlight path {
+.highlight path,
+.sticky path {
     stroke: #000;
     stroke-width: 2px;
 }
@@ -13,7 +14,8 @@ body {
     fill: #000;
 }
 
-.label.highlight path {
+.label.highlight path,
+.label.sticky path {
     fill: #fff;
 }
 
@@ -23,7 +25,8 @@ body {
     font-size: 14px;
 }
 
-.label.highlight text {
+.label.highlight text,
+.label.sticky text {
     fill: #000;
 }
 
@@ -35,7 +38,8 @@ body {
 	fill: #ccc;
 }
 
-#map path.country.active.highlight {
+#map path.country.active.highlight,
+#map path.country.active.sticky {
 	fill: #aaa;
 }
 

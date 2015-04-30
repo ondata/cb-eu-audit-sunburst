@@ -124,7 +124,7 @@ window.onload = function() {
                             return d.data.code + " " + "q"+(qi+1);
                         })
                         .classed("arc", true)
-                        .classed("highlight", function(d) {
+                        .classed("sticky", function(d) {
                             return getCountry && d.data.code === getCountry.toLowerCase();
                         });
 
@@ -175,6 +175,9 @@ window.onload = function() {
                 })
                 .classed("arc", true)
                 .classed("label", true)
+                .classed("sticky", function(d) {
+                    return getCountry && d.data.code === getCountry.toLowerCase();
+                })
                 .on("mouseover", function(d,i) {
                     sunSvg.selectAll(".arc." + d.data.code).classed("highlight", true);
                     if (mapSvg) mapSvg.selectAll(".country." + d.data.code).classed("highlight", true);
@@ -275,7 +278,7 @@ window.onload = function() {
             .classed("active", function(d) {
                 return codes && codes.indexOf(d.properties.iso_a3.toLowerCase()) > -1;
             })
-            .classed("highlight", function(d) {
+            .classed("sticky", function(d) {
                 return getCountry && d.properties.iso_a3.toLowerCase() === getCountry.toLowerCase();
             })
             .attr("d", path)
