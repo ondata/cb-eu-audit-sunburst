@@ -1,0 +1,40 @@
+{
+  "en": {
+      "%page.title": "EU Confiscati Bene - Audit sunburst",
+      "%header.title": "EU Confiscati Bene - Audit sunburst",
+      "%header.subtitle": "",
+      "%header.suptitle": "",
+      "%body.description": "",
+      "%body.sunburst.title": "",
+      "%body.sunburst.caption": "",
+      "%body.legend.questions.title": "",
+      "%body.legend.questions.caption": "",
+      "%body.legend.answers.title": "",
+      "%body.legend.answers.caption": "",
+      "%body.map.title": "",
+      "%body.map.caption": "",
+      "%footer.sources": "Data from a <a href='https://docs.google.com/spreadsheets/d/1vbKj-KBH4ZAeJu0oSEJXyRhMm-0JdQeqB1sE_2Gg8Hw/edit?usp=sharing' target='_blank'>public Google Sheet</a>.",
+      "%footer.resources": "",
+      "%footer.thanks": "",
+      "%footer.credits": ""
+  },
+  "it": {
+      "%page.title": "Confiscati Bene UE - Sunburst dell'audit",
+      "%header.title": "Confiscati Bene UE - Sunburst dell'audit",
+      "%header.subtitle": "",
+      "%header.suptitle": "",
+      "%body.description": "",
+      "%body.sunburst.title": "",
+      "%body.sunburst.caption": "",
+      "%body.legend.questions.title": "",
+      "%body.legend.questions.caption": "",
+      "%body.legend.answers.title": "",
+      "%body.legend.answers.caption": "",
+      "%body.map.title": "",
+      "%body.map.caption": "",
+      "%footer.sources": "Dati provenienti da un <a href='https://docs.google.com/spreadsheets/d/1vbKj-KBH4ZAeJu0oSEJXyRhMm-0JdQeqB1sE_2Gg8Hw/edit?usp=sharing' target='_blank'>Foglio Google pubblico</a>.",
+      "%footer.resources": "",
+      "%footer.thanks": "",
+      "%footer.credits": ""
+  }
+}

@@ -1,4 +1,14 @@
 window.onload = function() {
+    
+    // Funzione accessoria per la traduzione delle stringhe basata sul locale del browser
+    var t = function(s) {
+        return s.toLocaleString();
+    };
+    
+    // Traduzione di tutte le stringhe statiche della pagina
+    document.title = t("%page.title");
+    d3.select("#header-title").html(t("%header.title"));
+    d3.select("#footer-sources").html(t("%footer.sources"));
 
     var getCountry = Arg("country"),
         getLanguage = Arg("lang"),
@@ -43,7 +53,7 @@ window.onload = function() {
                 translations = t.sheets("Translations").all();
                 
             var l = {};
-            translations.forEach(function(el) { l[el["lang"]] = el; });
+            translations.forEach(function(el) { l[el["Language"]] = el; });
 
             countries = data.map(function(el) {
                 return el["country"];

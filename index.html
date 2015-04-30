@@ -5,10 +5,12 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta http-equiv="Content-Language" content="en">
   <link rel="icon" href="images/favicon.gif" type="image/gif"/>
+  <link rel="localizations" href="js/localizations.json" type="application/vnd.oftn.l10n+json"/>
   <title>Confiscati Bene EU - Audit sunburst</title>
   <link rel="stylesheet" href="lib/font-awesome.min.css">
   <link href="lib/grid.css" media="all" rel="stylesheet" />
   <link href="css/main.css" media="all" rel="stylesheet" />
+  <script src="lib/l10n.min.js"></script>
   <script src="lib/tabletop.js"></script>
   <script src="lib/arg-1.2.min.js"></script>
   <script src="lib/d3.min.js"></script>
@@ -18,11 +20,11 @@
 <body>
   <div class="container">
     <div class="grid">
-      <header class="grid__col grid__col--2-of-2"><h1>Confiscati Bene EU - Audit sunburst</h1></header>
+      <header class="grid__col grid__col--2-of-2"><h1 id="header-title">Confiscati Bene EU - Audit sunburst</h1></header>
       <div class="grid__col grid__col--2-of-2" id="sunburst"><i class="fa fa-spinner fa-spin"></i></div>
       <div class="grid__col grid__col--1-of-2" id="legend"><i class="fa fa-spinner fa-spin"></i></div>
       <div class="grid__col grid__col--1-of-2" id="map"><i class="fa fa-spinner fa-spin"></i></div>
-      <footer class="grid__col grid__col--2-of-2"><p>Data from a <a href="https://docs.google.com/spreadsheets/d/1vbKj-KBH4ZAeJu0oSEJXyRhMm-0JdQeqB1sE_2Gg8Hw/edit?usp=sharing" target="_blank">public Google Sheet</a>.</p></footer>
+      <footer class="grid__col grid__col--2-of-2"><p id="footer-sources">Data from a <a href="https://docs.google.com/spreadsheets/d/1vbKj-KBH4ZAeJu0oSEJXyRhMm-0JdQeqB1sE_2Gg8Hw/edit?usp=sharing" target="_blank">public Google Sheet</a>.</p></footer>
     </div>
   </div>
 </body>
