@@ -10,7 +10,7 @@ window.onload = function() {
         minRadius = maxRadius / 10,
         padRadius = 4,
         cornerRadius = 2,
-        countries, codes, questions,
+        countries, codes, labels, questions,
         sunSvg, mapSvg;
 
     // Scala dei colori per le risposte
@@ -34,17 +34,28 @@ window.onload = function() {
 
     Tabletop.init({
         key: '1vbKj-KBH4ZAeJu0oSEJXyRhMm-0JdQeqB1sE_2Gg8Hw',
-        simpleSheet: true,
-        callback: function(data, tabletop) {
+        simpleSheet: false,
+        callback: function(data, t) {
+            
+            var data = t.sheets("New Audit").all(),
+                meta = t.sheets("Meta").all(),
+                translations = t.sheets("Translations").all();
+                
+            var l = {};
+            translations.forEach(function(el) { l[el["lang"]] = el; });
 
             countries = data.map(function(el) {
-                return el.Country;
+                return el["country"];
             });
             codes = data.map(function(el) {
-                return el.ISO3166.toLowerCase();
+                return el["iso3166-1a3"].toLowerCase();
+            });
+            labels = data.map(function(el) {
+                return el["iso3166-1a2"].toUpperCase();
             });
             questions = d3.keys(data[0]).filter(function(el) {
-                return el != 'Country' && el != 'sovereingt' && el != 'ISO3166';
+                // return el.slice(0,1) === 'q';
+                return el != 'country' && el != 'sovereingt' && el != 'iso3166-1a3' && el != 'iso3166-1a2';
             });
 
             var stepRadius = (maxRadius - minRadius) / (questions.length + 1);
@@ -76,20 +87,22 @@ window.onload = function() {
                 .enter()
                 .append("g")
                 .attr("class", "pie")
-                .each(function(q, i) {
+                .each(function(q, qi) {
 
                     var arc = d3.svg.arc()
-                        .outerRadius(minRadius + (i + 1) * stepRadius - padRadius / 2)
-                        .innerRadius(minRadius + i * stepRadius + padRadius / 2)
+                        .outerRadius(minRadius + (qi + 1) * stepRadius - padRadius / 2)
+                        .innerRadius(minRadius + qi * stepRadius + padRadius / 2)
                         .cornerRadius(cornerRadius);
 
-                    var pieData = countries.map(function(el, i) {
+                    var pieData = countries.map(function(c, ci) {
+                        // Warning: questions and answers match by position, not by ID...
                         return {
-                            country: el,
-                            code: codes[i],
+                            country: c,
+                            code: codes[ci],
+                            label: labels[ci],
                             value: 1,
-                            question: q,
-                            answer: data[i][q]
+                            question: l[getCountry || "default"]["q"+(qi+1)],
+                            answer: data[ci][l["default"]["q"+(qi+1)]]
                         };
                     });
 
@@ -108,10 +121,10 @@ window.onload = function() {
                         .data(pie(pieData))
                         .enter().append("g")
                         .attr("class", function(d) {
-                            return d.data.code;
+                            return d.data.code + " " + "q"+(qi+1);
                         })
                         .classed("arc", true)
-                        .classed("highlight", function(d, i) {
+                        .classed("highlight", function(d) {
                             return getCountry && d.data.code === getCountry.toLowerCase();
                         });
 
@@ -122,7 +135,7 @@ window.onload = function() {
                         });
 
                     g.append("title")
-                        .text(function(d, i) {
+                        .text(function(d) {
                             return d.data.country + ": " + d.data.question + " -> " + d.data.answer;
                         });
 
@@ -133,11 +146,12 @@ window.onload = function() {
                 .outerRadius(maxRadius)
                 .innerRadius(maxRadius - stepRadius + padRadius / 2);
 
-            var pieData = countries.map(function(el, i) {
+            var pieData = countries.map(function(c, ci) {
                 return {
-                    country: el,
+                    country: c,
                     value: 1,
-                    code: codes[i]
+                    code: codes[ci],
+                    label: labels[ci]
                 };
             });
 
@@ -186,10 +200,10 @@ window.onload = function() {
                     return "#path" + i;
                 })
                 .text(function(d) {
-                    return d.data.code.toUpperCase();
+                    return d.data.label;
                 });
 
-            label.append("title").text(function(d, i) {
+            label.append("title").text(function(d) {
                 return d.data.country;
             });
             
@@ -208,13 +222,13 @@ window.onload = function() {
                     "width": (stepRadius - padRadius - 4) + "px",
                     "margin": padRadius/2 + "px"
                 })
-                .style("height", function(d,i) {
+                .style("height", function(q,i) {
                    return (10 + questions.length - i) + "px";
                 })
-                .on("mouseover", function(d,i) {
-                    legendContainer.select("#qtext").text(d);
+                .on("mouseover", function(q,i) {
+                    legendContainer.select("#qtext").text(l[getCountry || "default"]["q"+(questions.length-i)]);
                 })
-                .on("mouseout", function(d,i) {
+                .on("mouseout", function(q,i) {
                     legendContainer.select("#qtext").text("");
                 });
 
@@ -265,11 +279,11 @@ window.onload = function() {
                 return getCountry && d.properties.iso_a3.toLowerCase() === getCountry.toLowerCase();
             })
             .attr("d", path)
-            .on("mouseover", function(d, i) {
+            .on("mouseover", function(d) {
                 if (sunSvg) sunSvg.selectAll(".arc." + d.properties.iso_a3.toLowerCase()).classed("highlight", true);
                 d3.select(this).classed("highlight", true);
             })
-            .on("mouseout", function(d, i) {
+            .on("mouseout", function(d) {
                 if (sunSvg) sunSvg.selectAll(".arc." + d.properties.iso_a3.toLowerCase()).classed("highlight", false);
                 d3.select(this).classed("highlight", false);
             });
