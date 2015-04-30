@@ -1,6 +1,7 @@
 window.onload = function() {
 
     var getCountry = Arg("country"),
+        getLanguage = Arg("lang"),
         getNamedColors = Arg("ncolors"),
         getHexColors = Arg("hcolors");
 
@@ -101,7 +102,7 @@ window.onload = function() {
                             code: codes[ci],
                             label: labels[ci],
                             value: 1,
-                            question: l[getCountry || "default"]["q"+(qi+1)],
+                            question: l[getLanguage || getCountry || "default"]["q"+(qi+1)],
                             answer: data[ci][l["default"]["q"+(qi+1)]]
                         };
                     });
@@ -229,7 +230,7 @@ window.onload = function() {
                    return (10 + questions.length - i) + "px";
                 })
                 .on("mouseover", function(q,i) {
-                    legendContainer.select("#qtext").text(l[getCountry || "default"]["q"+(questions.length-i)]);
+                    legendContainer.select("#qtext").text(l[getLanguage || getCountry || "default"]["q"+(questions.length-i)]);
                 })
                 .on("mouseout", function(q,i) {
                     legendContainer.select("#qtext").text("");
