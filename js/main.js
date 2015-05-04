@@ -1,16 +1,38 @@
 window.onload = function() {
+    
+    // Funzione accessoria per la traduzione delle stringhe basata sul locale del browser
+    var t = function(s) {
+        return s.toLocaleString();
+    };
 
+    var ids = [];
+    d3.select("body")
+        .selectAll(".translatable")
+        .each(function() { 
+            var id = d3.select(this).attr("id"); 
+            if (id) ids.push(id); 
+        });
+    
+    // Traduzione di tutte le stringhe statiche della pagina
+    document.title = t("%page.title");
+    ids.forEach(function(id) {
+        d3.select("#"+id).html(t("%"+id.replace("-",".")));
+    });
+
+    // Gestione dei parametri GET passati nell'URL
     var getCountry = Arg("country"),
+        getLanguage = Arg("lang"), // Da uniformare i codici con l10n
         getNamedColors = Arg("ncolors"),
         getHexColors = Arg("hcolors");
 
+    // Variabili globali per le visualizzazioni
     var width = 640,
         height = 640,
         maxRadius = d3.min([width, height]) / 2,
         minRadius = maxRadius / 10,
         padRadius = 4,
         cornerRadius = 2,
-        countries, codes, questions,
+        countries, codes, labels, questions,
         sunSvg, mapSvg;
 
     // Scala dei colori per le risposte
@@ -22,29 +44,45 @@ window.onload = function() {
         mapContainer = d3.select("#map"),
         legendContainer = d3.select("#legend");
 
-    //imposto la proiezione della mappa
+    // Proiezione della mappa
     var projection = d3.geo.azimuthalEqualArea()
         .rotate([-9, 0, 0])
         .scale(450)
         .center([5, 42])
         .translate([width / 4, height / 3]);
 
-    //imposto la formula per calcolare il path delle geometrie
+    // Calcolo del path delle geometrie
     var path = d3.geo.path().projection(projection);
 
+    // Richiesta dei dati al google sheet
     Tabletop.init({
         key: '1vbKj-KBH4ZAeJu0oSEJXyRhMm-0JdQeqB1sE_2Gg8Hw',
-        simpleSheet: true,
-        callback: function(data, tabletop) {
+        simpleSheet: false, // Ottengo un oggetto con tutti i fogli
+        callback: function(data, t) {
+            
+            // I fogli di cui è composto il documento
+            var data = t.sheets("New Audit").all(),
+                meta = t.sheets("Meta").all(),
+                translations = t.sheets("Translations").all();
+                
+            // Oggetto accessorio per la traduzione delle domande.
+            // Probabilmente meglio che sia una funzione come t()
+            var q = {};
+            translations.forEach(function(el) { q[el["Language"]] = el; });
 
+            // Array accessori con alcune informazioni utili
             countries = data.map(function(el) {
-                return el.Country;
+                return el["country"];
             });
             codes = data.map(function(el) {
-                return el.ISO3166.toLowerCase();
+                return el["iso3166-1a3"].toLowerCase();
+            });
+            labels = data.map(function(el) {
+                return el["iso3166-1a2"].toUpperCase();
             });
             questions = d3.keys(data[0]).filter(function(el) {
-                return el != 'Country' && el != 'sovereingt' && el != 'ISO3166';
+                // return el.slice(0,1) === 'q';
+                return el != 'country' && el != 'sovereingt' && el != 'iso3166-1a3' && el != 'iso3166-1a2';
             });
 
             var stepRadius = (maxRadius - minRadius) / (questions.length + 1);
@@ -76,20 +114,22 @@ window.onload = function() {
                 .enter()
                 .append("g")
                 .attr("class", "pie")
-                .each(function(q, i) {
+                .each(function(dq, qi) {
 
                     var arc = d3.svg.arc()
-                        .outerRadius(minRadius + (i + 1) * stepRadius - padRadius / 2)
-                        .innerRadius(minRadius + i * stepRadius + padRadius / 2)
+                        .outerRadius(minRadius + (qi + 1) * stepRadius - padRadius / 2)
+                        .innerRadius(minRadius + qi * stepRadius + padRadius / 2)
                         .cornerRadius(cornerRadius);
 
-                    var pieData = countries.map(function(el, i) {
+                    var pieData = countries.map(function(dc, ci) {
+                        // Warning: questions and answers match by position, not by ID...
                         return {
-                            country: el,
-                            code: codes[i],
+                            country: dc,
+                            code: codes[ci],
+                            label: labels[ci],
                             value: 1,
-                            question: q,
-                            answer: data[i][q]
+                            question: getLanguage || getCountry ? q[getLanguage || getCountry][dq] || dq : dq,
+                            answer: data[ci][dq]
                         };
                     });
 
@@ -108,10 +148,10 @@ window.onload = function() {
                         .data(pie(pieData))
                         .enter().append("g")
                         .attr("class", function(d) {
-                            return d.data.code;
+                            return d.data.code + " " + "q"+(qi+1);
                         })
                         .classed("arc", true)
-                        .classed("highlight", function(d, i) {
+                        .classed("sticky", function(d) {
                             return getCountry && d.data.code === getCountry.toLowerCase();
                         });
 
@@ -122,7 +162,7 @@ window.onload = function() {
                         });
 
                     g.append("title")
-                        .text(function(d, i) {
+                        .text(function(d) {
                             return d.data.country + ": " + d.data.question + " -> " + d.data.answer;
                         });
 
@@ -133,11 +173,12 @@ window.onload = function() {
                 .outerRadius(maxRadius)
                 .innerRadius(maxRadius - stepRadius + padRadius / 2);
 
-            var pieData = countries.map(function(el, i) {
+            var pieData = countries.map(function(dc, ci) {
                 return {
-                    country: el,
+                    country: dc,
                     value: 1,
-                    code: codes[i]
+                    code: codes[ci],
+                    label: labels[ci]
                 };
             });
 
@@ -161,6 +202,9 @@ window.onload = function() {
                 })
                 .classed("arc", true)
                 .classed("label", true)
+                .classed("sticky", function(d) {
+                    return getCountry && d.data.code === getCountry.toLowerCase();
+                })
                 .on("mouseover", function(d,i) {
                     sunSvg.selectAll(".arc." + d.data.code).classed("highlight", true);
                     if (mapSvg) mapSvg.selectAll(".country." + d.data.code).classed("highlight", true);
@@ -186,10 +230,10 @@ window.onload = function() {
                     return "#path" + i;
                 })
                 .text(function(d) {
-                    return d.data.code.toUpperCase();
+                    return d.data.label;
                 });
 
-            label.append("title").text(function(d, i) {
+            label.append("title").text(function(d) {
                 return d.data.country;
             });
             
@@ -208,13 +252,13 @@ window.onload = function() {
                     "width": (stepRadius - padRadius - 4) + "px",
                     "margin": padRadius/2 + "px"
                 })
-                .style("height", function(d,i) {
-                   return (10 + questions.length - i) + "px";
+                .style("height", function(dq,qi) {
+                   return (10 + questions.length - qi) + "px";
                 })
-                .on("mouseover", function(d,i) {
-                    legendContainer.select("#qtext").text(d);
+                .on("mouseover", function(dq) {
+                    legendContainer.select("#qtext").text(getLanguage || getCountry ? q[getLanguage || getCountry][dq] || dq : dq);
                 })
-                .on("mouseout", function(d,i) {
+                .on("mouseout", function() {
                     legendContainer.select("#qtext").text("");
                 });
 
@@ -261,15 +305,15 @@ window.onload = function() {
             .classed("active", function(d) {
                 return codes && codes.indexOf(d.properties.iso_a3.toLowerCase()) > -1;
             })
-            .classed("highlight", function(d) {
+            .classed("sticky", function(d) {
                 return getCountry && d.properties.iso_a3.toLowerCase() === getCountry.toLowerCase();
             })
             .attr("d", path)
-            .on("mouseover", function(d, i) {
+            .on("mouseover", function(d) {
                 if (sunSvg) sunSvg.selectAll(".arc." + d.properties.iso_a3.toLowerCase()).classed("highlight", true);
                 d3.select(this).classed("highlight", true);
             })
-            .on("mouseout", function(d, i) {
+            .on("mouseout", function(d) {
                 if (sunSvg) sunSvg.selectAll(".arc." + d.properties.iso_a3.toLowerCase()).classed("highlight", false);
                 d3.select(this).classed("highlight", false);
             });
