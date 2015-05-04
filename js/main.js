@@ -4,11 +4,20 @@ window.onload = function() {
     var t = function(s) {
         return s.toLocaleString();
     };
+
+    var ids = [];
+    d3.select("body")
+        .selectAll(".translatable")
+        .each(function() { 
+            var id = d3.select(this).attr("id"); 
+            if (id) ids.push(id); 
+        });
     
     // Traduzione di tutte le stringhe statiche della pagina
     document.title = t("%page.title");
-    d3.select("#header-title").html(t("%header.title"));
-    d3.select("#footer-sources").html(t("%footer.sources"));
+    ids.forEach(function(id) {
+        d3.select("#"+id).html(t("%"+id.replace("-",".")));
+    });
 
     // Gestione dei parametri GET passati nell'URL
     var getCountry = Arg("country"),
@@ -58,8 +67,8 @@ window.onload = function() {
                 
             // Oggetto accessorio per la traduzione delle domande.
             // Probabilmente meglio che sia una funzione come t()
-            var l = {};
-            translations.forEach(function(el) { l[el["Language"]] = el; });
+            var q = {};
+            translations.forEach(function(el) { q[el["Language"]] = el; });
 
             // Array accessori con alcune informazioni utili
             countries = data.map(function(el) {
@@ -105,22 +114,22 @@ window.onload = function() {
                 .enter()
                 .append("g")
                 .attr("class", "pie")
-                .each(function(q, qi) {
+                .each(function(dq, qi) {
 
                     var arc = d3.svg.arc()
                         .outerRadius(minRadius + (qi + 1) * stepRadius - padRadius / 2)
                         .innerRadius(minRadius + qi * stepRadius + padRadius / 2)
                         .cornerRadius(cornerRadius);
 
-                    var pieData = countries.map(function(c, ci) {
+                    var pieData = countries.map(function(dc, ci) {
                         // Warning: questions and answers match by position, not by ID...
                         return {
-                            country: c,
+                            country: dc,
                             code: codes[ci],
                             label: labels[ci],
                             value: 1,
-                            question: l[getLanguage || getCountry || "default"]["q"+(qi+1)],
-                            answer: data[ci][l["default"]["q"+(qi+1)]]
+                            question: getLanguage || getCountry ? q[getLanguage || getCountry][dq] || dq : dq,
+                            answer: data[ci][dq]
                         };
                     });
 
@@ -164,9 +173,9 @@ window.onload = function() {
                 .outerRadius(maxRadius)
                 .innerRadius(maxRadius - stepRadius + padRadius / 2);
 
-            var pieData = countries.map(function(c, ci) {
+            var pieData = countries.map(function(dc, ci) {
                 return {
-                    country: c,
+                    country: dc,
                     value: 1,
                     code: codes[ci],
                     label: labels[ci]
@@ -243,13 +252,13 @@ window.onload = function() {
                     "width": (stepRadius - padRadius - 4) + "px",
                     "margin": padRadius/2 + "px"
                 })
-                .style("height", function(q,i) {
-                   return (10 + questions.length - i) + "px";
+                .style("height", function(dq,qi) {
+                   return (10 + questions.length - qi) + "px";
                 })
-                .on("mouseover", function(q,i) {
-                    legendContainer.select("#qtext").text(l[getLanguage || getCountry || "default"]["q"+(questions.length-i)]);
+                .on("mouseover", function(dq) {
+                    legendContainer.select("#qtext").text(getLanguage || getCountry ? q[getLanguage || getCountry][dq] || dq : dq);
                 })
-                .on("mouseout", function(q,i) {
+                .on("mouseout", function() {
                     legendContainer.select("#qtext").text("");
                 });
 
