@@ -1,4 +1,4 @@
-Sunburst viz for the audit of Confiscati Bene EU, v0.2.2
+Sunburst viz for the audit of Confiscati Bene EU, v0.3.0
 
 Live versione: http://ondata.github.io/cb-eu-audit-sunburst/.
 
