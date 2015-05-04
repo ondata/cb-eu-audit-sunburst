@@ -10,11 +10,13 @@ window.onload = function() {
     d3.select("#header-title").html(t("%header.title"));
     d3.select("#footer-sources").html(t("%footer.sources"));
 
+    // Gestione dei parametri GET passati nell'URL
     var getCountry = Arg("country"),
-        getLanguage = Arg("lang"),
+        getLanguage = Arg("lang"), // Da uniformare i codici con l10n
         getNamedColors = Arg("ncolors"),
         getHexColors = Arg("hcolors");
 
+    // Variabili globali per le visualizzazioni
     var width = 640,
         height = 640,
         maxRadius = d3.min([width, height]) / 2,
@@ -33,28 +35,33 @@ window.onload = function() {
         mapContainer = d3.select("#map"),
         legendContainer = d3.select("#legend");
 
-    //imposto la proiezione della mappa
+    // Proiezione della mappa
     var projection = d3.geo.azimuthalEqualArea()
         .rotate([-9, 0, 0])
         .scale(450)
         .center([5, 42])
         .translate([width / 4, height / 3]);
 
-    //imposto la formula per calcolare il path delle geometrie
+    // Calcolo del path delle geometrie
     var path = d3.geo.path().projection(projection);
 
+    // Richiesta dei dati al google sheet
     Tabletop.init({
         key: '1vbKj-KBH4ZAeJu0oSEJXyRhMm-0JdQeqB1sE_2Gg8Hw',
-        simpleSheet: false,
+        simpleSheet: false, // Ottengo un oggetto con tutti i fogli
         callback: function(data, t) {
             
+            // I fogli di cui è composto il documento
             var data = t.sheets("New Audit").all(),
                 meta = t.sheets("Meta").all(),
                 translations = t.sheets("Translations").all();
                 
+            // Oggetto accessorio per la traduzione delle domande.
+            // Probabilmente meglio che sia una funzione come t()
             var l = {};
             translations.forEach(function(el) { l[el["Language"]] = el; });
 
+            // Array accessori con alcune informazioni utili
             countries = data.map(function(el) {
                 return el["country"];
             });
