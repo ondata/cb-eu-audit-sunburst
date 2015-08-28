@@ -36,7 +36,7 @@ window.onload = function() {
         sunSvg, mapSvg;
 
     // Scala dei colori per le risposte
-    var colors = getNamedColors || getHexColors ? (getHexColors ? getHexColors.split(',').map(function(el) { return '#'+el; }) : getNamedColors.split(',')) : ["green","grey","red"],
+    var colors = getNamedColors || getHexColors ? (getHexColors ? getHexColors.split(',').map(function(el) { return '#'+el; }) : getNamedColors.split(',')) : ["red","white","gray"],
         color = d3.scale.ordinal().range(colors).domain(["Y", "N.A.", "N"]);
 
     // Contenitori delle viz
